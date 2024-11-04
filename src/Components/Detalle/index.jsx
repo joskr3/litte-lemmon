@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React from "react"
+import React from "react";
 
 const Card = (props) => {
-    const { url = "", texto = "" } = props
+    const { url = "", texto = "" } = props;
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800">
             <div className="flex flex-col md:flex-row">
@@ -28,43 +28,20 @@ const Card = (props) => {
             </div>
         </div>
     );
-}
+};
 
-const detalles = [
-    {
-        url: "https://cdn.pixabay.com/photo/2021/10/30/12/50/woman-6754248_1280.jpg",
-        texto: "Un desayuno ejecutivo",
-        id: "menu-01a01"
-    },
-    {
-        url: "https://cdn.pixabay.com/photo/2021/10/30/12/50/woman-6754248_1280.jpg",
-        texto: "El mejor Salmon en la ciudad",
-        id: "menu-02b02"
-    },
-    {
-        url: "https://cdn.pixabay.com/photo/2021/10/30/12/50/woman-6754248_1280.jpg",
-        texto: "El mejor Salmon en la ciudad",
-        id: "menu-03c03"
-    },
-    {
-        url: "https://cdn.pixabay.com/photo/2015/04/10/00/41/food-715542_1280.jpg",
-        texto: "El Ramen premiado en los awards 2024",
-        id: "menu-04d04"
-    }
-]
-
-const Detalle = () => {
+const Detalle = ({ cards }) => {
     return (
         <section className="py-12 bg-gray-50 dark:bg-gray-900">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="grid gap-8">
-                    {detalles.map(({ url, texto, id }) => (
-                        <Card key={id} url={url} texto={texto} />
+                    {cards.map(({ id, image, title }) => (
+                        <Card key={id} url={image} texto={title} />
                     ))}
                 </div>
             </div>
         </section>
     );
-}
+};
 
-export default Detalle
+export default Detalle;

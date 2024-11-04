@@ -1,17 +1,18 @@
 /* eslint-disable no-unused-vars */
-import React from "react"
+import React from "react";
+import PropTypes from "prop-types";
 
-const HeroImage = () => {
+const HeroImage = ({ image }) => {
     return (
         <div className="absolute inset-0">
             <img 
-                src="postre.webp" 
+                src={image.src} 
                 className="h-full w-full object-cover brightness-75" 
-                alt="postre principal" 
+                alt={image.alt} 
             />
         </div>
-    )
-}
+    );
+};
 
 const HeroButton = () => {
     return (
@@ -21,8 +22,8 @@ const HeroButton = () => {
         >
             Reservar
         </button>
-    )
-}
+    );
+};
 
 const HeroContent = () => {
     return (
@@ -37,16 +38,23 @@ const HeroContent = () => {
                 <HeroButton />
             </div>
         </div>
-    )
-}
+    );
+};
 
-const Hero = () => {
+const Hero = ({ image }) => {
     return (
         <section className="relative h-[80vh] bg-gray-900">
-            <HeroImage />
+            <HeroImage image={image} />
             <HeroContent />
         </section>
-    )
-}
+    );
+};
 
-export default Hero
+Hero.propTypes = {
+    image: PropTypes.shape({
+        src: PropTypes.string.isRequired,
+        alt: PropTypes.string.isRequired
+    }).isRequired
+};
+
+export default Hero;

@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React from "react"
+import React from "react";
 
 /* eslint-disable react/prop-types */
 const MenuButton = (props) => {
-    const { texto } = props
+    const { texto } = props;
     return (
         <button 
             type="button" 
@@ -11,36 +11,21 @@ const MenuButton = (props) => {
         >
             {texto}
         </button>
-    )
-}
+    );
+};
 
-const opciones = [
-    {
-        texto: "Vegano",
-        id: "veg-01"
-    },
-    {
-        texto: "Carnes",
-        id: "car-01"
-    },
-    {
-        texto: "Asiatica",
-        id: "asi-01"
-    }
-]
-
-const Menu = () => {
+const Menu = ({ options }) => {
     return (
         <section className="bg-gray-50 dark:bg-gray-900 py-12">
             <div className="max-w-7xl mx-auto px-4">
                 <nav className="flex flex-wrap justify-center gap-6">
-                    {opciones.map(({ texto, id }) => (
-                        <MenuButton key={id} texto={texto} />
+                    {options.map(({ id, name }) => (
+                        <MenuButton key={id} texto={name} />
                     ))}
                 </nav>
             </div>
         </section>
     );
-}
+};
 
-export default Menu
+export default Menu;
