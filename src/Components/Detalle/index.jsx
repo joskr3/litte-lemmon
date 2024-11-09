@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useQuery } from "@tanstack/react-query";
