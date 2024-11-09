@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React from "react"
+import React from "react";
+import useFetch from "../../hooks/useFetch";
 
 const Card = ({ url = "", texto = "" }) => {
   return (
@@ -30,41 +31,27 @@ const Card = ({ url = "", texto = "" }) => {
   );
 };
 
-const detalles = [
-    {
-        url: "https://cdn.pixabay.com/photo/2021/10/30/12/50/woman-6754248_1280.jpg",
-        texto: "Un desayuno ejecutivo",
-        id: "menu-01a01"
-    },
-    {
-        url: "https://cdn.pixabay.com/photo/2021/10/30/12/50/woman-6754248_1280.jpg",
-        texto: "El mejor Salmon en la ciudad",
-        id: "menu-02b02"
-    },
-    {
-        url: "https://cdn.pixabay.com/photo/2021/10/30/12/50/woman-6754248_1280.jpg",
-        texto: "El mejor Salmon en la ciudad",
-        id: "menu-03c03"
-    },
-    {
-        url: "https://cdn.pixabay.com/photo/2015/04/10/00/41/food-715542_1280.jpg",
-        texto: "El Ramen premiado en los awards 2024",
-        id: "menu-04d04"
-    }
-]
-
 const Detalle = () => {
-    return (
-        <section className="py-12 bg-gray-50 dark:bg-gray-900">
-            <div className="max-w-7xl mx-auto px-4">
-                <div className="grid gap-8">
-                    {detalles.map(({ url, texto, id }) => (
-                        <Card key={id} url={url} texto={texto} />
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
-}
+  const { data, loading, error } = useFetch(
+    "https://jsonplaceholder.typicode.com/photos"
+  );
+  return (
+    <section className="py-12 bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="grid gap-8">
+          {loading && <div>Esta cargando.. </div>}
+          {data?.map(({ id, url, titulo }) => (
+            <Card
+              key={id}
+              url={url}
+              texto={titulo}
+            />
+          ))}
+          {error && <div> {error} </div>}
+        </div>
+      </div>
+    </section>
+  );
+};
 
-export default Detalle
+export default Detalle;
