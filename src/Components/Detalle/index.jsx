@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import useFetch from "../../hooks/useFetch";
+// import useFetch from "../../hooks/useFetch";
 
 const Card = ({ url = "", texto = "" }) => {
   return (
@@ -32,22 +33,23 @@ const Card = ({ url = "", texto = "" }) => {
 };
 
 const Detalle = () => {
-  const { data, loading, error } = useFetch(
-    "https://jsonplaceholder.typicode.com/photos"
-  );
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ["queryFotos"],
+    queryFn: () =>
+      fetch("https://picsum.photos/v2/list").then((res) => res.json()),
+  });
+
+    if (isPending) return "Loading...";
+    if (error) return "An error has occurred: " + error.message;
+
   return (
     <section className="py-12 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid gap-8">
-          {loading && <div>Esta cargando.. </div>}
-          {data?.map(({ id, url, titulo }) => (
-            <Card
-              key={id}
-              url={url}
-              texto={titulo}
-            />
+          {data.map((obj) => (
+            <Card key={obj.id} url={obj.download_url} texto={obj.author} />
           ))}
-          {error && <div> {error} </div>}
         </div>
       </div>
     </section>
