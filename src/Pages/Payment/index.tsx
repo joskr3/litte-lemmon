@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { guardarEnLocalStorage } from '../../utils/guardarEnLocalStorage'; // Import local storage utility
+import { guardarEnLocalStorage, obtenerDeLocalStorage } from '../../utils/guardarEnLocalStorage'; // Import local storage utility
 import { useOrder } from '../../Context/OrderContext'; // Import OrderContext
 
 // Define validation schema with Zod
@@ -15,25 +15,26 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-
 const Payment = () => {
   const location = useLocation();
-  const { selectedDishes } = location.state || {};
-  const totalAmount = selectedDishes ? selectedDishes.reduce((total: number, dish: { price: number }) => total + dish.price, 0) : 0;
-  const { addOrder } = useOrder(); // Get addOrder function from OrderContext
+  const { orders, addOrder } = useOrder(); // Get orders and addOrder from OrderContext
+  const totalAmount = location.state?.totalAmount || obtenerDeLocalStorage('totalAmount') || 0; // Retrieve totalAmount from location state or default to 0
+  const selectedDishes = location.state?.selectedDishes || []; // Retrieve selectedDishes from location state
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
   const onSubmit = (data: FormData) => {
-    // Handle payment processing here
-    addOrder(selectedDishes, totalAmount); // Add order to context
-    guardarEnLocalStorage('orders', { selectedDishes, totalAmount }); // Save order to local storage
-    alert(`Pago realizado con éxito por un total de $${totalAmount}`);
-    // Redirect to home page
-    console.log(data)
-    window.location.href = '/'; // Redirect to home
+    // Save order data to local storage
+    const updatedOrders = [...orders, { ...data, totalAmount }];
+    guardarEnLocalStorage('orders', updatedOrders);
+
+    // Add order to OrderContext
+    addOrder(selectedDishes, totalAmount); // Pass selectedDishes and totalAmount
+
+    // Redirect to a success page or perform other actions
+    console.log('Pago exitoso:', data);
   };
 
   return (
@@ -82,7 +83,7 @@ const Payment = () => {
         </div>
 
         <div className="text-center">
-          <p className="text-lg font-medium">Total a Pagar: ${totalAmount}</p>
+          <p className="text-lg font-medium">Total a Pagar: ${totalAmount.toFixed(2)}</p>
         </div>
 
         <button

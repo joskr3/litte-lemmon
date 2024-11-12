@@ -8,6 +8,8 @@ import { useTable, Dish } from "../../Context/TableContext"; // Import Dish type
 import { useUser } from "../../Context/UserContexto"; // Import UserContext
 import Header from "../../Components/Header";
 import { useNavigate } from "react-router-dom";
+import { useOrder } from "../../Context/OrderContext"; // Correct import path
+import { guardarEnLocalStorage } from "../../utils/guardarEnLocalStorage"; // Import local storage utility
 
 // Define validation schema with Zod
 const schema = z.object({
@@ -41,10 +43,12 @@ const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
 
 const ReservationForm = () => {
   const context = useTable();
+  const { addOrder, orders } = useOrder(); // Get addOrder and orders from OrderContext
   if (!context) {
     throw new Error("useTable debe ser usado dentro de un TableProvider");
   }
   const { availableDishes, makeReservation } = context; // Get available dishes and makeReservation function
+
   const { user } = useUser(); // Get user info from UserContext
   const navigate = useNavigate();
 
@@ -85,14 +89,27 @@ const ReservationForm = () => {
       makeReservation(data.selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
 
       // Calculate total amount
-      const totalAmount = selectedDishes.reduce((total, dish) => total + dish.price, 0);
+      const totalAmount = selectedDishes.reduce(
+        (total, dish) => total + dish.price,
+        0
+      );
+
+      // Create the new order
+      const newOrder = { selectedDishes, totalAmount };
+
+      // Add order to OrderContext
+      addOrder(selectedDishes, totalAmount);
+
+      // Save the new order in local storage
+      const updatedOrders = [...orders, newOrder];
+      guardarEnLocalStorage("orders", updatedOrders);
 
       // Navigate to Payment page with reservation details
-      navigate("/resume", {
+      navigate("/payment", {
         state: {
           selectedDishes,
           totalAmount,
-          user
+          user,
         },
       }); // Pass selected dishes and total amount
 
@@ -137,7 +154,6 @@ const ReservationForm = () => {
       </button>
 
       {/* Reservation Form */}
-
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-6 max-w-md mx-auto mt-4"
