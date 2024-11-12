@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -20,16 +22,15 @@ type FormData = z.infer<typeof schema>;
 interface TableProps {
   number: number;
   onSelect: (number: number) => void;
-  isSelected: boolean; // New prop to indicate if the table is selected
 }
 
-const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
+const Table: React.FC<TableProps> = ({ number, onSelect }) => (
   <button
     onClick={() => {
       onSelect(number);
       alert(`Mesa ${number} reservada`);
     }}
-    className={`w-40 h-40 border-2 rounded-lg transition-colors flex items-center justify-center ${isSelected ? 'bg-green-200' : 'border-green-600 hover:bg-green-50'}`}
+    className="w-40 h-40 border-2 border-green-600 rounded-lg hover:bg-green-50 transition-colors flex items-center justify-center"
   >
     <span className="text-xl font-medium text-green-700">Mesa {number}</span>
   </button>
@@ -43,14 +44,24 @@ const ReservationForm = () => {
   const { availableDishes, makeReservation } = context;
   const navigate = useNavigate();
 
+  const currentDate = new Date();
+  const defaultDate = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  const defaultTime = currentDate.toTimeString().split(' ')[0].slice(0, 5); // Format: HH:MM
+
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      date: defaultDate,
+      time: defaultTime,
+      selectedDishes: [],
+      selectedTable: 0,
+    },
   });
 
-  const [selectedTable, setSelectedTable] = useState<number | null>(null); // State to track selected table
+  const [showDateTime, setShowDateTime] = useState(false); // State to control visibility of date and time fields
 
   const onSubmit = async (data: FormData) => {
-    if (selectedTable === null) {
+    if (data.selectedTable === null) {
       return; // Prevent submission if no table is selected
     }
     try {
@@ -62,15 +73,15 @@ const ReservationForm = () => {
         throw new Error("Plato no encontrado");
       }
 
-      makeReservation(selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
+      makeReservation(data.selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
       alert('¡Reserva realizada con éxito!');
       // Navigate to Resume page with reservation details
-      navigate('/resume', { state: { date: data.date, time: data.time, selectedDishes, selectedTable } });
+      navigate('/resume', { state: { date: data.date, time: data.time, selectedDishes, selectedTable: data.selectedTable } });
       // Reset form
+      setValue("selectedTable", 0);
       setValue("date", '');
       setValue("time", '');
       setValue("selectedDishes", []);
-      setSelectedTable(null); // Reset selected table
     } catch (err) {
       console.error(err);
     }
@@ -88,65 +99,69 @@ const ReservationForm = () => {
           <Table
             key={number}
             number={number}
-            onSelect={setSelectedTable}
-            isSelected={selectedTable === number} // Pass selected state
+            onSelect={(tableNumber) => setValue("selectedTable", tableNumber)}
           />
         ))}
       </div>
 
+      {/* Button to show date and time fields */}
+      <button
+        type="button"
+        onClick={() => setShowDateTime(!showDateTime)}
+        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      >
+        Hacer Reserva
+      </button>
+
       {/* Reservation Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Fecha
-          </label>
-          <input
-            type="date"
-            {...register("date")}
-            className={`w-full px-4 py-2 rounded-lg border ${errors.date ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
-          />
-          {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Hora
-          </label>
-          <input
-            type="time"
-            {...register("time")}
-            className={`w-full px-4 py-2 rounded-lg border ${errors.time ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
-          />
-          {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            Platos
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {availableDishes.map((dish) => (
-              <div key={dish.id} className="border rounded-lg p-4 hover:bg-gray-100">
-                <input
-                  type="checkbox"
-                  value={dish.name}
-                  {...register("selectedDishes")}
-                  className="mr-2"
-                />
-                <span>{dish.name} - ${dish.price}</span>
-              </div>
-            ))}
+      {showDateTime && (
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto mt-4">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Fecha
+            </label>
+            <input
+              type="date"
+              {...register("date")}
+              className={`w-full px-4 py-2 rounded-lg border ${errors.date ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+            />
+            {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
           </div>
-          {errors.selectedDishes && <p className="text-red-500 text-sm">{errors.selectedDishes.message}</p>}
-        </div>
 
-        <button
-          type="submit"
-          className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-        >
-          Realizar Pedido
-        </button>
-      </form>
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Hora
+            </label>
+            <input
+              type="time"
+              {...register("time")}
+              className={`w-full px-4 py-2 rounded-lg border ${errors.time ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+            />
+            {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
+          </div>
+        </form>
+      )}
+
+      {/* Dish Selection */}
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-gray-700">
+          Platos
+        </label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {availableDishes.map((dish) => (
+            <div key={dish.id} className="border rounded-lg p-4 hover:bg-gray-100">
+              <input
+                type="checkbox"
+                value={dish.name}
+                {...register("selectedDishes")}
+                className="mr-2"
+              />
+              <span>{dish.name} - ${dish.price}</span>
+            </div>
+          ))}
+        </div>
+        {errors.selectedDishes && <p className="text-red-500 text-sm">{errors.selectedDishes.message}</p>}
+      </div>
     </div>
   );
 };
