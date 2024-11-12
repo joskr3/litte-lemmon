@@ -109,7 +109,10 @@ const ReservationForm = () => {
       </button>
 
       {/* Reservation Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto mt-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6 max-w-md mx-auto mt-4"
+      >
         {showDateTime && (
           <>
             <div className="space-y-2">
@@ -119,9 +122,13 @@ const ReservationForm = () => {
               <input
                 type="date"
                 {...register("date")}
-                className={`w-full px-4 py-2 rounded-lg border ${errors.date ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.date ? "border-red-500" : "border-gray-300"
+                } focus:ring-2 focus:ring-green-500 focus:border-transparent`}
               />
-              {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
+              {errors.date && (
+                <p className="text-red-500 text-sm">{errors.date.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -131,32 +138,45 @@ const ReservationForm = () => {
               <input
                 type="time"
                 {...register("time")}
-                className={`w-full px-4 py-2 rounded-lg border ${errors.time ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+                className={`w-full px-4 py-2 rounded-lg border ${
+                  errors.time ? "border-red-500" : "border-gray-300"
+                } focus:ring-2 focus:ring-green-500 focus:border-transparent`}
               />
-              {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
+              {errors.time && (
+                <p className="text-red-500 text-sm">{errors.time.message}</p>
+              )}
             </div>
           </>
         )}
 
         {/* Dish Selection */}
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+        <div className="space-y-6">
+          <label className="text-4xl font-bold text-green-700 text-center m-auto space-y-6">
             Platos
           </label>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {availableDishes.map((dish) => (
-              <div key={dish.id} className="border rounded-lg p-4 hover:bg-gray-100">
+              <div
+                key={dish.id}
+                className="border rounded-lg p-4 hover:bg-gray-100"
+              >
                 <input
                   type="checkbox"
                   value={dish.name}
                   {...register("selectedDishes")}
                   className="mr-2"
                 />
-                <span>{dish.name} - ${dish.price}</span>
+                <span>
+                  {dish.name} - ${dish.price}
+                </span>
               </div>
             ))}
           </div>
-          {errors.selectedDishes && <p className="text-red-500 text-sm">{errors.selectedDishes.message}</p>}
+          {errors.selectedDishes && (
+            <p className="text-red-500 text-sm">
+              {errors.selectedDishes.message}
+            </p>
+          )}
         </div>
 
         <button
