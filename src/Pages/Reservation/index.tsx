@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,15 +20,16 @@ type FormData = z.infer<typeof schema>;
 interface TableProps {
   number: number;
   onSelect: (number: number) => void;
+  isSelected: boolean; // New prop to indicate if the table is selected
 }
 
-const Table: React.FC<TableProps> = ({ number, onSelect }) => (
+const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
   <button
     onClick={() => {
       onSelect(number);
       alert(`Mesa ${number} reservada`);
     }}
-    className="w-40 h-40 border-2 border-green-600 rounded-lg hover:bg-green-50 transition-colors flex items-center justify-center"
+    className={`w-40 h-40 border-2 rounded-lg transition-colors flex items-center justify-center ${isSelected ? 'bg-green-200' : 'border-green-600 hover:bg-green-50'}`}
   >
     <span className="text-xl font-medium text-green-700">Mesa {number}</span>
   </button>
@@ -48,8 +47,10 @@ const ReservationForm = () => {
     resolver: zodResolver(schema),
   });
 
+  const [selectedTable, setSelectedTable] = useState<number | null>(null); // State to track selected table
+
   const onSubmit = async (data: FormData) => {
-    if (data.selectedTable === null) {
+    if (selectedTable === null) {
       return; // Prevent submission if no table is selected
     }
     try {
@@ -61,15 +62,15 @@ const ReservationForm = () => {
         throw new Error("Plato no encontrado");
       }
 
-      makeReservation(data.selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
+      makeReservation(selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
       alert('¡Reserva realizada con éxito!');
       // Navigate to Resume page with reservation details
-      navigate('/resume', { state: { date: data.date, time: data.time, selectedDishes, selectedTable: data.selectedTable } });
+      navigate('/resume', { state: { date: data.date, time: data.time, selectedDishes, selectedTable } });
       // Reset form
-      setValue("selectedTable", 0);
       setValue("date", '');
       setValue("time", '');
       setValue("selectedDishes", []);
+      setSelectedTable(null); // Reset selected table
     } catch (err) {
       console.error(err);
     }
@@ -87,7 +88,8 @@ const ReservationForm = () => {
           <Table
             key={number}
             number={number}
-            onSelect={(tableNumber) => setValue("selectedTable", tableNumber)}
+            onSelect={setSelectedTable}
+            isSelected={selectedTable === number} // Pass selected state
           />
         ))}
       </div>
@@ -122,17 +124,19 @@ const ReservationForm = () => {
           <label className="block text-sm font-medium text-gray-700">
             Platos
           </label>
-          <select
-            {...register("selectedDishes")}
-            multiple
-            className={`w-full px-4 py-2 rounded-lg border ${errors.selectedDishes ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {availableDishes.map((dish) => (
-              <option key={dish.id} value={dish.name}>
-                {dish.name} - ${dish.price}
-              </option>
+              <div key={dish.id} className="border rounded-lg p-4 hover:bg-gray-100">
+                <input
+                  type="checkbox"
+                  value={dish.name}
+                  {...register("selectedDishes")}
+                  className="mr-2"
+                />
+                <span>{dish.name} - ${dish.price}</span>
+              </div>
             ))}
-          </select>
+          </div>
           {errors.selectedDishes && <p className="text-red-500 text-sm">{errors.selectedDishes.message}</p>}
         </div>
 
