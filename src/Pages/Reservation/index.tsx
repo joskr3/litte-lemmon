@@ -7,15 +7,7 @@ import Header from '../../Components/Header';
 
 // Define validation schema with Zod
 const schema = z.object({
-  date: z
-    .date({
-      required_error: "Por favor seleccione una fecha",
-      invalid_type_error: "Por favor seleccione una fecha válida",
-    })
-    .min(new Date(), "La fecha no puede ser anterior a la actual")
-    .refine((date) => date != null, {
-      message: "Por favor seleccione una fecha",
-    }),
+  date: z.string().min(1, "Fecha es requerida"),
   time: z.string().min(1, "Hora es requerida"),
   selectedDish: z.string().min(1, "Plato es requerido"),
   selectedTable: z.number().min(1, "Por favor seleccione una mesa"),
@@ -61,13 +53,12 @@ const ReservationForm = () => {
       if (!selectedDish) {
         throw new Error("Plato no encontrado");
       }
-      makeReservation(data.selectedTable, data.date.toDateString() , data.time, selectedDish);
+      const reservationDate = new Date(data.date); // Convert string to Date object
+      makeReservation(data.selectedTable, reservationDate.toISOString(), data.time, selectedDish); // Pass date as ISO string
       alert('¡Reserva realizada con éxito!');
       // Reset form
       setValue("selectedTable", 0);
-      setValue("date", 
-        new Date().toISOString().split('T')[0] as unknown as Date,
-       );
+      setValue("date", '');
       setValue("time", '');
       setValue("selectedDish", '');
     } catch (err) {
