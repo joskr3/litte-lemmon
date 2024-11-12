@@ -1,11 +1,11 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../../Context/UserContexto";
 
-const Header = () => {
+// Define the Header component
+const Header: React.FC = () => {
   const { user, logout } = useUser();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   const handleLogout = () => {
     logout();
@@ -36,6 +36,7 @@ const Header = () => {
                   {user.nombre}
                 </span>
                 <button
+                  type="button"
                   onClick={handleLogout}
                   className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                 >
@@ -43,12 +44,20 @@ const Header = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base font-medium rounded-lg text-green-600 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors dark:text-green-400 dark:hover:text-green-300"
-              >
-                Login
-              </Link>
+              <div className="flex items-center space-x-2 sm:space-x-4">
+                <Link
+                  to="/login"
+                  className="text-sm sm:text-base font-medium text-gray-700 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white"
+                >
+                  Iniciar sesión
+                </Link>
+                <Link
+                  to="/register"
+                  className="ml-4 text-sm sm:text-base font-medium text-white bg-green-600 hover:bg-green-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                >
+                  Registrarse
+                </Link>
+              </div>
             )}
             <div className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
               <img
