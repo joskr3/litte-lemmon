@@ -1,16 +1,30 @@
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable react/prop-types */
-// @ts-nocheck
-/* eslint-disable no-unused-vars */
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
-const UserContext = createContext();
+interface User {
+  nombre: string;
+  password: string;
+  email: string;
+}
 
-const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [registeredUsers, setRegisteredUsers] = useState([]);
+interface UserContextType {
+  user: User | null;
+  login: (userData: { nombre: string; password: string }) => boolean;
+  logout: () => void;
+  register: (userData: User) => boolean;
+  isAuthenticated: boolean;
+}
 
-  const register = (userData) => {
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+interface UserProviderProps {
+  children: ReactNode;
+}
+
+const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [registeredUsers, setRegisteredUsers] = useState<User[]>([]);
+
+  const register = (userData: User): boolean => {
     if (!userData.nombre || !userData.password || !userData.email) {
       throw new Error("Todos los campos son requeridos");
     }
@@ -32,7 +46,7 @@ const UserProvider = ({ children }) => {
     return true;
   };
 
-  const login = (userData) => {
+  const login = (userData: { nombre: string; password: string }): boolean => {
     if (!userData.nombre || !userData.password) {
       throw new Error("Usuario y contraseña son requeridos");
     }
@@ -51,11 +65,11 @@ const UserProvider = ({ children }) => {
     return true;
   };
 
-  const logout = () => {
+  const logout = (): void => {
     setUser(null);
   };
 
-  const value = {
+  const value: UserContextType = {
     user,
     login,
     logout,
@@ -63,12 +77,10 @@ const UserProvider = ({ children }) => {
     isAuthenticated: !!user,
   };
 
-  const Provider = UserContext.Provider;
-
-  return <Provider value={value}>{children}</Provider>;
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
-const useUser = () => {
+const useUser = (): UserContextType => {
   const context = useContext(UserContext);
   if (context === undefined) {
     throw new Error("useUser debe ser usado dentro de un UserProvider");
