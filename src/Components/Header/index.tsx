@@ -35,6 +35,12 @@ const Header: React.FC = () => {
                 <span className="hidden sm:block text-sm sm:text-base text-green-600 font-medium dark:text-green-400">
                   {user.nombre}
                 </span>
+                <Link
+                  to="/mis-pedidos"
+                  className="hidden sm:block text-sm sm:text-base text-green-600 font-medium dark:text-green-400"
+                >
+                  Mis pedidos
+                </Link>
                 <button
                   type="button"
                   onClick={handleLogout}
@@ -73,9 +79,17 @@ const Header: React.FC = () => {
         <div className={`${isMenuOpen ? "block" : "hidden"} md:hidden`}>
           <div className="px-2 pt-2 pb-3 space-y-1">
             {user && (
-              <span className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200">
-                {user.nombre}
-              </span>
+              <>
+                <span className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200">
+                  {user.nombre}
+                </span>
+                <Link
+                  to="/mis-pedidos"
+                  className="hidden sm:block text-sm sm:text-base text-green-600 font-medium dark:text-green-400"
+                >
+                  Mis pedidos
+                </Link>
+              </>
             )}
             <div className="relative">
               <div

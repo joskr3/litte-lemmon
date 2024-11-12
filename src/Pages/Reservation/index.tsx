@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTable, Dish } from "../../Context/TableContext"; // Import Dish type
-import { useUser } from "../../Context/UserContexto"; // Import UserContext
+import { useTable, Dish } from "../../Context/TableContext";
 import Header from "../../Components/Header";
-import { useNavigate } from "react-router-dom";
-import { useOrder } from "../../Context/OrderContext"; // Correct import path
-import { guardarEnLocalStorage } from "../../utils/guardarEnLocalStorage"; // Import local storage utility
+import { useLocation, useNavigate } from "react-router-dom";
+import { useOrder } from "../../Context/OrderContext";
+import {
+  guardarEnLocalStorage,
+  obtenerDeLocalStorage,
+} from "../../utils/guardarEnLocalStorage";
 
 // Define validation schema with Zod
 const schema = z.object({
@@ -25,14 +27,12 @@ type FormData = z.infer<typeof schema>;
 interface TableProps {
   number: number;
   onSelect: (number: number) => void;
-  isSelected: boolean; // New prop to indicate if the table is selected
+  isSelected: boolean;
 }
 
 const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
   <button
-    onClick={() => {
-      onSelect(number);
-    }}
+    onClick={() => onSelect(number)}
     className={`w-40 h-40 border-2 rounded-lg transition-colors flex items-center justify-center ${
       isSelected ? "bg-green-200" : "border-green-600 hover:bg-green-50"
     }`}
@@ -43,18 +43,17 @@ const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
 
 const ReservationForm = () => {
   const context = useTable();
-  const { addOrder, orders } = useOrder(); // Get addOrder and orders from OrderContext
+  const { addOrder, orders } = useOrder();
+
   if (!context) {
     throw new Error("useTable debe ser usado dentro de un TableProvider");
   }
-  const { availableDishes, makeReservation } = context; // Get available dishes and makeReservation function
 
-  const { user } = useUser(); // Get user info from UserContext
-  const navigate = useNavigate();
-
+  const { availableDishes } = context;
+  const location = useLocation();
   const currentDate = new Date();
-  const defaultDate = currentDate.toISOString().split("T")[0]; // Format: YYYY-MM-DD
-  const defaultTime = currentDate.toTimeString().split(" ")[0].slice(0, 5); // Format: HH:MM
+  const defaultDate = currentDate.toISOString().split("T")[0];
+  const defaultTime = currentDate.toTimeString().split(" ")[0].slice(0, 5);
 
   const {
     register,
@@ -71,56 +70,51 @@ const ReservationForm = () => {
     },
   });
 
-  const [showDateTime, setShowDateTime] = useState(false); // State to control visibility of date and time fields
-  const [selectedTable, setSelectedTable] = useState<number | null>(null); // State to track selected table
+  const [showDateTime, setShowDateTime] = useState(false);
+  const [selectedTable, setSelectedTable] = useState<number | null>(null);
+  // const localStorageTotalAmount = +obtenerDeLocalStorage("totalAmount");
+  // const totalAmount:number =
+  //   location.state?.totalAmount || localStorageTotalAmount || 0;
+
+  const orderFromDishes = (dishes: Dish[]): FormData["selectedDishes"] => {
+    return dishes.map((dish) => dish.name);
+  };
+
+  const selectedDishes = orderFromDishes(
+    location.state?.selectedDishes ||
+      obtenerDeLocalStorage("selectedDishes") ||
+      []
+  );
+
+  const totalAmountFromSelectedDishes = selectedDishes.reduce((total, dishName) => {
+    const dish = availableDishes.find((d) => d.name === dishName);
+    return total + (dish ? dish.price : 0);
+  }, 0);
+
+  const totalAmount:number = location.state?.totalAmount || totalAmountFromSelectedDishes || 0;
+
+  const navigate = useNavigate();
 
   const onSubmit = async (data: FormData) => {
-    try {
-      const selectedDishes = data.selectedDishes
-        .map((dishName) =>
-          availableDishes.find((dish) => dish.name === dishName)
-        )
-        .filter((dish): dish is Dish => dish !== undefined); // Filter out undefined values
+    const updatedOrders = [...orders, { ...data, totalAmount }];
+    guardarEnLocalStorage("orders", updatedOrders);
+    
+    // Create an array of dish objects with name and price
+    const dishDetailsFromData = data.selectedDishes.map((dishName) => {
+      const dish = availableDishes.find((d) => d.name === dishName);
+      return {
+        name: dishName,
+        price: dish ? dish.price : 0,
+      };
+    });
 
-      if (selectedDishes.length === 0) {
-        throw new Error("Plato no encontrado");
-      }
-
-      makeReservation(data.selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
-
-      // Calculate total amount
-      const totalAmount = selectedDishes.reduce(
-        (total, dish) => total + dish.price,
-        0
-      );
-
-      // Create the new order
-      const newOrder = { selectedDishes, totalAmount };
-
-      // Add order to OrderContext
-      addOrder(selectedDishes, totalAmount);
-
-      // Save the new order in local storage
-      const updatedOrders = [...orders, newOrder];
-      guardarEnLocalStorage("orders", updatedOrders);
-
-      // Navigate to Payment page with reservation details
-      navigate("/payment", {
-        state: {
-          selectedDishes,
-          totalAmount,
-          user,
-        },
-      }); // Pass selected dishes and total amount
-
-      // Reset form
-      setValue("selectedTable", 0);
-      setValue("date", "");
-      setValue("time", "");
-      setValue("selectedDishes", []);
-    } catch (err) {
-      console.error(err);
-    }
+    // addOrder from data and totalAmount
+    addOrder(dishDetailsFromData, totalAmount);
+    
+    // Navigate to a success page or confirmation page
+    navigate('/resume',
+      { state: { ...data, totalAmount, selectedDishes } }
+    ); // Change '/success' to the desired route
   };
 
   return (
@@ -128,7 +122,6 @@ const ReservationForm = () => {
       <h1 className="text-4xl font-bold text-green-700 text-center mb-8">
         Reserva tu Mesa
       </h1>
-
       {/* Tables Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
         {[1, 2, 3, 4].map((number) => (
@@ -139,11 +132,10 @@ const ReservationForm = () => {
               setSelectedTable(tableNumber);
               setValue("selectedTable", tableNumber);
             }}
-            isSelected={selectedTable === number} // Pass selected state
+            isSelected={selectedTable === number}
           />
         ))}
       </div>
-
       {/* Button to show date and time fields */}
       <button
         type="button"
@@ -152,7 +144,6 @@ const ReservationForm = () => {
       >
         Hacer Reserva
       </button>
-
       {/* Reservation Form */}
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -175,7 +166,6 @@ const ReservationForm = () => {
                 <p className="text-red-500 text-sm">{errors.date.message}</p>
               )}
             </div>
-
             <div className="space-y-2">
               <label className="block text-sm font-medium text-gray-700">
                 Hora
