@@ -28,7 +28,6 @@ const Table: React.FC<TableProps> = ({ number, onSelect }) => (
   <button
     onClick={() => {
       onSelect(number);
-      alert(`Mesa ${number} reservada`);
     }}
     className="w-40 h-40 border-2 border-green-600 rounded-lg hover:bg-green-50 transition-colors flex items-center justify-center"
   >
@@ -61,9 +60,6 @@ const ReservationForm = () => {
   const [showDateTime, setShowDateTime] = useState(false); // State to control visibility of date and time fields
 
   const onSubmit = async (data: FormData) => {
-    if (data.selectedTable === null) {
-      return; // Prevent submission if no table is selected
-    }
     try {
       const selectedDishes = data.selectedDishes.map(dishName => 
         availableDishes.find(dish => dish.name === dishName)
@@ -74,7 +70,6 @@ const ReservationForm = () => {
       }
 
       makeReservation(data.selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
-      alert('¡Reserva realizada con éxito!');
       // Navigate to Resume page with reservation details
       navigate('/resume', { state: { date: data.date, time: data.time, selectedDishes, selectedTable: data.selectedTable } });
       // Reset form
@@ -108,60 +103,69 @@ const ReservationForm = () => {
       <button
         type="button"
         onClick={() => setShowDateTime(!showDateTime)}
-        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="w-full py-3 px-4 bg-yellow-500 hover:bg-yellow-600 text-green-700 font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400"
       >
         Hacer Reserva
       </button>
 
       {/* Reservation Form */}
-      {showDateTime && (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto mt-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Fecha
-            </label>
-            <input
-              type="date"
-              {...register("date")}
-              className={`w-full px-4 py-2 rounded-lg border ${errors.date ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
-            />
-            {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
-          </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Hora
-            </label>
-            <input
-              type="time"
-              {...register("time")}
-              className={`w-full px-4 py-2 rounded-lg border ${errors.time ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
-            />
-            {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
-          </div>
-        </form>
-      )}
-
-      {/* Dish Selection */}
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700">
-          Platos
-        </label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {availableDishes.map((dish) => (
-            <div key={dish.id} className="border rounded-lg p-4 hover:bg-gray-100">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-md mx-auto mt-4">
+        {showDateTime && (
+          <>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Fecha
+              </label>
               <input
-                type="checkbox"
-                value={dish.name}
-                {...register("selectedDishes")}
-                className="mr-2"
+                type="date"
+                {...register("date")}
+                className={`w-full px-4 py-2 rounded-lg border ${errors.date ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
               />
-              <span>{dish.name} - ${dish.price}</span>
+              {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
             </div>
-          ))}
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Hora
+              </label>
+              <input
+                type="time"
+                {...register("time")}
+                className={`w-full px-4 py-2 rounded-lg border ${errors.time ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+              />
+              {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
+            </div>
+          </>
+        )}
+
+        {/* Dish Selection */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Platos
+          </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {availableDishes.map((dish) => (
+              <div key={dish.id} className="border rounded-lg p-4 hover:bg-gray-100">
+                <input
+                  type="checkbox"
+                  value={dish.name}
+                  {...register("selectedDishes")}
+                  className="mr-2"
+                />
+                <span>{dish.name} - ${dish.price}</span>
+              </div>
+            ))}
+          </div>
+          {errors.selectedDishes && <p className="text-red-500 text-sm">{errors.selectedDishes.message}</p>}
         </div>
-        {errors.selectedDishes && <p className="text-red-500 text-sm">{errors.selectedDishes.message}</p>}
-      </div>
+
+        <button
+          type="submit"
+          className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+        >
+          Hacer Pedido
+        </button>
+      </form>
     </div>
   );
 };
