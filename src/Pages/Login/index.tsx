@@ -1,54 +1,42 @@
 /* eslint-disable no-unused-vars */
-import { useState, ChangeEvent, FormEvent } from "react";
+
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../../Context/UserContexto";
-import Hlogin from "@/Components/Hlogin";
+import Hlogin from "../../Components/Hlogin";
 
-// Define interface for form data
-interface FormData {
-  usuario: string;
-  password: string;
-}
+// Define validation schema with Zod
+const schema = z.object({
+  usuario: z.string().min(1, "Usuario es requerido"),
+  password: z.string().min(1, "Contraseña es requerida"),
+});
+
+// Define types for form data
+type FormData = z.infer<typeof schema>;
 
 const LoginSection = () => {
-  const [formData, setFormData] = useState<FormData>({
-    usuario: "",
-    password: ""
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
   });
-  const [error, setError] = useState<string>("");
   const { login } = useUser();
   const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-
-    if (!formData.usuario || !formData.password) {
-      setError("Por favor complete todos los campos");
-      return;
-    }
-
+  const onSubmit = async (data: FormData) => {
     try {
       await login({
-        nombre: formData.usuario,
-        password: formData.password
+        nombre: data.usuario,
+        password: data.password,
       });
       navigate("/");
-    } catch (err: any) { // Explicitly typing the error
-      setError(err.message);
+    } catch (err: any) {
+      console.error(err);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md w-full mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md w-full mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <div className="space-y-6">
         <div className="space-y-2">
           <label
@@ -60,12 +48,11 @@ const LoginSection = () => {
           <input
             type="text"
             id="usuario"
-            name="usuario"
-            value={formData.usuario}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            {...register("usuario")}
+            className={`w-full px-4 py-2 rounded-lg border ${errors.usuario ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
             placeholder="Ingrese su usuario"
           />
+          {errors.usuario && <p className="text-red-500 text-sm">{errors.usuario.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -78,17 +65,12 @@ const LoginSection = () => {
           <input
             type="password"
             id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            {...register("password")}
+            className={`w-full px-4 py-2 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
             placeholder="Ingrese su contraseña"
           />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </div>
-
-        {error && (
-          <p className="text-red-500 text-sm">{error}</p>
-        )}
 
         <button 
           type="submit"
