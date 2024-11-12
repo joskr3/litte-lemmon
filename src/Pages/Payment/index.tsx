@@ -1,8 +1,8 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { guardarEnLocalStorage, obtenerDeLocalStorage } from '../../utils/guardarEnLocalStorage'; // Import local storage utility
+import {  obtenerDeLocalStorage } from '../../utils/guardarEnLocalStorage'; // Import local storage utility
 import { useOrder } from '../../Context/OrderContext'; // Import OrderContext
 
 // Define validation schema with Zod
@@ -17,23 +17,19 @@ type FormData = z.infer<typeof schema>;
 
 const Payment = () => {
   const location = useLocation();
-  const { orders, addOrder } = useOrder(); // Get orders and addOrder from OrderContext
-  const totalAmount = location.state?.totalAmount || obtenerDeLocalStorage('totalAmount') || 0; // Retrieve totalAmount from location state or default to 0
-  const selectedDishes = location.state?.selectedDishes || []; // Retrieve selectedDishes from location state
+  const { orders } = useOrder(); // Get orders and addOrder from OrderContext
+  const totalAmount:number = location.state?.totalAmount || obtenerDeLocalStorage('totalAmount') || 0; // Retrieve totalAmount from location state or default to 0
+  const totalAmountFromOrders = orders.reduce((total, order) => total + order.totalAmount, 0);
+  const total:number = totalAmountFromOrders > 0 ? totalAmountFromOrders : totalAmount;
+  const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
   const onSubmit = (data: FormData) => {
-    // Save order data to local storage
-    const updatedOrders = [...orders, { ...data, totalAmount }];
-    guardarEnLocalStorage('orders', updatedOrders);
-
-    // Add order to OrderContext
-    addOrder(selectedDishes, totalAmount); // Pass selectedDishes and totalAmount
-
-    // Redirect to a success page or perform other actions
+    // Redirect to home
+    navigate('/');
     console.log('Pago exitoso:', data);
   };
 
@@ -83,7 +79,7 @@ const Payment = () => {
         </div>
 
         <div className="text-center">
-          <p className="text-lg font-medium">Total a Pagar: ${totalAmount.toFixed(2)}</p>
+          <p className="text-lg font-medium">Total a Pagar: ${total.toFixed(2)}</p>
         </div>
 
         <button
