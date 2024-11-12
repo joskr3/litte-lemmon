@@ -1,19 +1,25 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../../Context/UserContexto";
-import Hlogin from "../../Components/Hlogin";
+import Hlogin from "@/Components/Hlogin";
+
+// Define interface for form data
+interface FormData {
+  usuario: string;
+  password: string;
+}
 
 const LoginSection = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     usuario: "",
     password: ""
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
   const { login } = useUser();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -21,7 +27,7 @@ const LoginSection = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -36,7 +42,7 @@ const LoginSection = () => {
         password: formData.password
       });
       navigate("/");
-    } catch (err) {
+    } catch (err: any) { // Explicitly typing the error
       setError(err.message);
     }
   };

@@ -1,14 +1,18 @@
-/* eslint-disable no-unused-vars */
-import React from "react"
+import React from "react";
+import { Link } from "react-router-dom";
 
-const Footer = () => {
-  return (
-    <footer className="flex w-full ">
-      <p>Copyright &copy; 2022</p>
-      <a href="#">Back to Top</a> 
-      <p>Made with ❤️ by <a href="https://github.com/joskr2">Josue</a></p>
-    </footer>
-  )
-}
-
-export default Footer
+const Footer = () => (
+  <footer className="flex w-full justify-between items-center p-4">
+    <p>Copyright &copy; {new Date().getFullYear()}</p>
+    <Link to="#top" className="hover:underline">
+      Back to Top
+    </Link>
+    <p>
+      Made with ❤️ by{" "}
+      <Link to="https://github.com/joskr2" className="hover:underline">
+        Josue
+      </Link>
+    </p>
+  </footer>
+);
+export default Footer;

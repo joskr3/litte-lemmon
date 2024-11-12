@@ -1,11 +1,17 @@
-// @ts-nocheck
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
-// import useFetch from "../../hooks/useFetch";
 
-const Card = ({ url = "", texto = "" }) => {
+interface CardProps {
+  url: string;
+  texto: string;
+}
+
+interface DetalleProps {
+  id: string;
+  download_url: string;
+  author: string;
+}
+
+const Card = ({ url = "", texto = "" }: CardProps) => {
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800">
       <div className="flex flex-col md:flex-row">
@@ -33,22 +39,23 @@ const Card = ({ url = "", texto = "" }) => {
   );
 };
 
-const Detalle = () => {
 
+
+const Detalle = () => {
   const { isPending, error, data } = useQuery({
     queryKey: ["queryFotos"],
     queryFn: () =>
       fetch("https://picsum.photos/v2/list").then((res) => res.json()),
   });
 
-    if (isPending) return "Loading...";
-    if (error) return "An error has occurred: " + error.message;
+  if (isPending) return "Loading...";
+  if (error) return "An error has occurred: " + error.message;
 
   return (
     <section className="py-12 bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid gap-8">
-          {data.map((obj) => (
+          {data.map((obj:DetalleProps) => (
             <Card key={obj.id} url={obj.download_url} texto={obj.author} />
           ))}
         </div>
