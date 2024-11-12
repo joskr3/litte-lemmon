@@ -10,6 +10,7 @@ const Home = React.lazy(() => import('../Home'))
 const Login = React.lazy(() => import('../Login'))
 const Register = React.lazy(() => import('../Register'))
 const Reservation = React.lazy(() => import('../Reservation'))
+const Resume = React.lazy(() => import('../Resume')) // Import Resume
 
 // Loading component
 const LoadingSpinner = () => (
@@ -56,6 +57,15 @@ const AppRoutes = () => {
           element={
             <ProtectedRoute>
               <Reservation />
+            </ProtectedRoute>
+          }
+          errorElement={<ErrorBoundary />}
+        />
+        <Route
+          path="/resume"
+          element={
+            <ProtectedRoute>
+              <Resume />
             </ProtectedRoute>
           }
           errorElement={<ErrorBoundary />}

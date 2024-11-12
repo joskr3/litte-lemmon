@@ -1,15 +1,18 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useTable } from '../../Context/TableContext';
+import { useTable, Dish } from '../../Context/TableContext'; // Import Dish type
 import Header from '../../Components/Header';
+import { useNavigate } from 'react-router-dom';
 
 // Define validation schema with Zod
 const schema = z.object({
   date: z.string().min(1, "Fecha es requerida"),
   time: z.string().min(1, "Hora es requerida"),
-  selectedDish: z.string().min(1, "Plato es requerido"),
+  selectedDishes: z.array(z.string()).min(1, "Al menos un plato es requerido"),
   selectedTable: z.number().min(1, "Por favor seleccione una mesa"),
 });
 
@@ -39,6 +42,7 @@ const ReservationForm = () => {
     throw new Error("useTable debe ser usado dentro de un TableProvider");
   }
   const { availableDishes, makeReservation } = context;
+  const navigate = useNavigate();
 
   const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -49,18 +53,23 @@ const ReservationForm = () => {
       return; // Prevent submission if no table is selected
     }
     try {
-      const selectedDish = availableDishes.find(dish => dish.name === data.selectedDish);
-      if (!selectedDish) {
+      const selectedDishes = data.selectedDishes.map(dishName => 
+        availableDishes.find(dish => dish.name === dishName)
+      ).filter((dish): dish is Dish => dish !== undefined); // Filter out undefined values
+
+      if (selectedDishes.length === 0) {
         throw new Error("Plato no encontrado");
       }
-      const reservationDate = new Date(data.date); // Convert string to Date object
-      makeReservation(data.selectedTable, reservationDate.toISOString(), data.time, selectedDish); // Pass date as ISO string
+
+      makeReservation(data.selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
       alert('¡Reserva realizada con éxito!');
+      // Navigate to Resume page with reservation details
+      navigate('/resume', { state: { date: data.date, time: data.time, selectedDishes, selectedTable: data.selectedTable } });
       // Reset form
       setValue("selectedTable", 0);
       setValue("date", '');
       setValue("time", '');
-      setValue("selectedDish", '');
+      setValue("selectedDishes", []);
     } catch (err) {
       console.error(err);
     }
@@ -111,20 +120,20 @@ const ReservationForm = () => {
 
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
-            Plato
+            Platos
           </label>
           <select
-            {...register("selectedDish")}
-            className={`w-full px-4 py-2 rounded-lg border ${errors.selectedDish ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
+            {...register("selectedDishes")}
+            multiple
+            className={`w-full px-4 py-2 rounded-lg border ${errors.selectedDishes ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent`}
           >
-            <option value="">Seleccione un plato</option>
             {availableDishes.map((dish) => (
               <option key={dish.id} value={dish.name}>
                 {dish.name} - ${dish.price}
               </option>
             ))}
           </select>
-          {errors.selectedDish && <p className="text-red-500 text-sm">{errors.selectedDish.message}</p>}
+          {errors.selectedDishes && <p className="text-red-500 text-sm">{errors.selectedDishes.message}</p>}
         </div>
 
         <button

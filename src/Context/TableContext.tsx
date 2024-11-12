@@ -5,7 +5,7 @@ import { createContext, useContext, useState } from "react";
 import { useUser } from "./UserContexto.tsx";
 
 // Define interfaces
-interface Dish {
+export interface Dish { // Exporting Dish interface
   id: number;
   name: string;
   price: number;
@@ -17,7 +17,7 @@ interface Reservation {
   tableNumber: number;
   date: string;
   time: string;
-  dish: Dish;
+  dishes: Dish[]; // Changed to an array of dishes
   createdAt: string;
 }
 
@@ -28,7 +28,7 @@ interface TableContextValue {
     tableNumber: number,
     date: string,
     time: string,
-    selectedDish: Dish
+    selectedDishes: Dish[] // Changed to accept an array of dishes
   ) => Reservation;
   getUserReservations: () => Reservation[];
 }
@@ -52,7 +52,7 @@ const TableProvider = ({ children }) => {
     tableNumber: number,
     date: string,
     time: string,
-    selectedDish: Dish
+    selectedDishes: Dish[] // Accept an array of dishes
   ): Reservation => {
     if (!user) {
       throw new Error("Debe iniciar sesión para hacer una reserva");
@@ -64,7 +64,7 @@ const TableProvider = ({ children }) => {
       tableNumber,
       date,
       time,
-      dish: selectedDish,
+      dishes: selectedDishes, // Store the array of dishes
       createdAt: new Date().toISOString(),
     };
 
