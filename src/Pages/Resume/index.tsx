@@ -50,7 +50,7 @@ const Resume = () => {
 
   const IrAlPago = () => {
     return (
-      <Link to="/pago" className="mt-4 text-blue-500 hover:underline">
+      <Link to="/payment" className="mt-4 text-blue-500 hover:underline">
         Ir al pago
       </Link>
     );
@@ -79,7 +79,10 @@ const Resume = () => {
         </>
       )}
       {selectedDishes.length > 0 && <IrAlPago />}
-      <IraHome />
+      <div className="mt-4 mx-4  gap-4 inline-flex ">
+        <IrAlPago />
+        <IraHome />
+      </div>
     </div>
   );
 };
