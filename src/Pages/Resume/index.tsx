@@ -29,7 +29,7 @@ const Resume = () => {
           </ul>
         </div>
         <Link
-          to="/payment" 
+          to="/payment" // Assuming there is a payment page
           className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-center block"
         >
           Ir a Pagar

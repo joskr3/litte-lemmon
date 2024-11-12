@@ -2,6 +2,8 @@ import { useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { guardarEnLocalStorage } from '../../utils/guardarEnLocalStorage'; // Import local storage utility
+import { useOrder } from '../../Context/OrderContext'; // Import OrderContext
 
 // Define validation schema with Zod
 const schema = z.object({
@@ -13,10 +15,12 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
+
 const Payment = () => {
   const location = useLocation();
   const { selectedDishes } = location.state || {};
   const totalAmount = selectedDishes ? selectedDishes.reduce((total: number, dish: { price: number }) => total + dish.price, 0) : 0;
+  const { addOrder } = useOrder(); // Get addOrder function from OrderContext
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -24,8 +28,12 @@ const Payment = () => {
 
   const onSubmit = (data: FormData) => {
     // Handle payment processing here
-    console.log("Payment Data:", data);
+    addOrder(selectedDishes, totalAmount); // Add order to context
+    guardarEnLocalStorage('orders', { selectedDishes, totalAmount }); // Save order to local storage
     alert(`Pago realizado con éxito por un total de $${totalAmount}`);
+    // Redirect to home page
+    console.log(data)
+    window.location.href = '/'; // Redirect to home
   };
 
   return (

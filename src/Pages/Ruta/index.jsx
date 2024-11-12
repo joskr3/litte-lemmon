@@ -12,7 +12,7 @@ const Register = React.lazy(() => import('../Register'))
 const Reservation = React.lazy(() => import('../Reservation'))
 const Resume = React.lazy(() => import('../Resume')) // Import Resume
 const Payment = React.lazy(() => import('../Payment')) // Import Payment
-//const Confirmation = React.lazy(() => import('../Confirmation')) // Import Confirmation
+const MisPedidos = React.lazy(() => import('../MisPedidos')) // Import MisPedidos
 
 // Loading component
 const LoadingSpinner = () => (
@@ -68,12 +68,20 @@ const AppRoutes = () => {
           }
           errorElement={<ErrorBoundary />}
         />
-
         <Route
           path="/payment"
           element={
             <ProtectedRoute>
               <Payment />
+            </ProtectedRoute>
+          }
+          errorElement={<ErrorBoundary />}
+        />
+        <Route
+          path="/mis-pedidos"
+          element={
+            <ProtectedRoute>
+              <MisPedidos />
             </ProtectedRoute>
           }
           errorElement={<ErrorBoundary />}
