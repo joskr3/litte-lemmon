@@ -2,7 +2,7 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useState } from "react";
-import { useUser } from "./UserContexto.tsx";
+import { useUser } from "./UserContexto.tsx"; // Import UserContext
 
 // Define interfaces
 export interface Dish { // Exporting Dish interface
@@ -24,7 +24,6 @@ interface Reservation {
 interface TableContextValue {
   reservations: Reservation[];
   availableDishes: Dish[];
-  user: any; // Add user property
   makeReservation: (
     tableNumber: number,
     date: string,
@@ -45,7 +44,7 @@ const initialDishes: Dish[] = [
 ];
 
 const TableProvider = ({ children }) => {
-  const { user } = useUser();
+  const { user } = useUser(); // Get user info from UserContext
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [availableDishes] = useState<Dish[]>(initialDishes);
 
@@ -81,7 +80,6 @@ const TableProvider = ({ children }) => {
   const value: TableContextValue = {
     reservations,
     availableDishes,
-    user, // Include user in context value
     makeReservation,
     getUserReservations,
   };
