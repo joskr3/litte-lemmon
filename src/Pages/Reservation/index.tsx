@@ -83,16 +83,18 @@ const ReservationForm = () => {
       }
 
       makeReservation(data.selectedTable, data.date, data.time, selectedDishes); // Pass array of selected dishes
-      // Navigate to Resume page with reservation details
-      navigate("/resume", {
+
+      // Calculate total amount
+      const totalAmount = selectedDishes.reduce((total, dish) => total + dish.price, 0);
+
+      // Navigate to Payment page with reservation details
+      navigate("/payment", {
         state: {
-          date: data.date,
-          time: data.time,
           selectedDishes,
-          selectedTable,
-          user,
+          totalAmount,
         },
-      }); // Pass user info
+      }); // Pass selected dishes and total amount
+
       // Reset form
       setValue("selectedTable", 0);
       setValue("date", "");

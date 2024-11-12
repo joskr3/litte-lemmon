@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { guardarEnLocalStorage } from '../utils/guardarEnLocalStorage'; // Import local storage utility
 
 interface Order {
   id: string;
@@ -23,7 +24,11 @@ const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       totalAmount,
       dishes,
     };
-    setOrders((prevOrders) => [...prevOrders, newOrder]);
+    setOrders((prevOrders) => {
+      const updatedOrders = [...prevOrders, newOrder];
+      guardarEnLocalStorage('orders', updatedOrders); // Save updated orders to local storage
+      return updatedOrders;
+    });
   };
 
   const value: OrderContextType = {
