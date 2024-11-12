@@ -88,10 +88,11 @@ const ReservationForm = () => {
       const totalAmount = selectedDishes.reduce((total, dish) => total + dish.price, 0);
 
       // Navigate to Payment page with reservation details
-      navigate("/payment", {
+      navigate("/resume", {
         state: {
           selectedDishes,
           totalAmount,
+          user
         },
       }); // Pass selected dishes and total amount
 
