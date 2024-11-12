@@ -7,7 +7,7 @@ interface Dish {
 
 const Resume = () => {
   const location = useLocation();
-  const { date, time, selectedDishes, selectedTable } = location.state || {};
+  const { date, time, selectedDishes, selectedTable, user } = location.state || {};
 
   return (
     <div className="max-w-md mx-auto px-4 py-8 bg-white shadow-lg rounded-lg">
@@ -15,6 +15,7 @@ const Resume = () => {
       <div className="space-y-4">
         <div>
           <h2 className="text-lg font-medium">Detalles de la Reserva</h2>
+          <p className="text-gray-700"><strong>Usuario:</strong> {user?.nombre} ({user?.email})</p>
           <p className="text-gray-700"><strong>Mesa:</strong> {selectedTable}</p>
           <p className="text-gray-700"><strong>Fecha:</strong> {date}</p>
           <p className="text-gray-700"><strong>Hora:</strong> {time}</p>

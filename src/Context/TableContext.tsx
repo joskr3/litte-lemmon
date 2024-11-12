@@ -24,6 +24,7 @@ interface Reservation {
 interface TableContextValue {
   reservations: Reservation[];
   availableDishes: Dish[];
+  user: any; // Add user property
   makeReservation: (
     tableNumber: number,
     date: string,
@@ -80,6 +81,7 @@ const TableProvider = ({ children }) => {
   const value: TableContextValue = {
     reservations,
     availableDishes,
+    user, // Include user in context value
     makeReservation,
     getUserReservations,
   };

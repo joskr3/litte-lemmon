@@ -11,6 +11,8 @@ const Login = React.lazy(() => import('../Login'))
 const Register = React.lazy(() => import('../Register'))
 const Reservation = React.lazy(() => import('../Reservation'))
 const Resume = React.lazy(() => import('../Resume')) // Import Resume
+const Payment = React.lazy(() => import('../Payment')) // Import Payment
+//const Confirmation = React.lazy(() => import('../Confirmation')) // Import Confirmation
 
 // Loading component
 const LoadingSpinner = () => (
@@ -35,18 +37,14 @@ const AppRoutes = () => {
     <React.Suspense fallback={<LoadingSpinner />}>
       <Routes>
         {/* Public routes */}
-        <Route 
-          path="/" 
-          element={<Home />}
-          errorElement={<ErrorBoundary />}
-        />
-        <Route 
-          path="/login" 
+        <Route path="/" element={<Home />} errorElement={<ErrorBoundary />} />
+        <Route
+          path="/login"
           element={<Login />}
           errorElement={<ErrorBoundary />}
         />
-        <Route 
-          path="/register" 
+        <Route
+          path="/register"
           element={<Register />}
           errorElement={<ErrorBoundary />}
         />
@@ -71,11 +69,18 @@ const AppRoutes = () => {
           errorElement={<ErrorBoundary />}
         />
 
-        {/* Catch all route - redirect to error page */}
-        <Route 
-          path="*" 
-          element={<ErrorBoundary />} 
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              <Payment />
+            </ProtectedRoute>
+          }
+          errorElement={<ErrorBoundary />}
         />
+
+        {/* Catch all route - redirect to error page */}
+        <Route path="*" element={<ErrorBoundary />} />
       </Routes>
     </React.Suspense>
   );
