@@ -1,67 +1,46 @@
-/* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../../Context/UserContexto";
 import Hlogin from "../../Components/Hlogin";
 
+// Define validation schema with Zod
+const schema = z.object({
+  nombre: z.string().min(1, "Nombre es requerido"),
+  email: z.string().email("Email no válido"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+  confirmPassword: z.string().min(1, "Confirmar contraseña es requerido"),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Las contraseñas no coinciden",
+  path: ["confirmPassword"],
+});
+
+// Define types for form data
+type FormData = z.infer<typeof schema>;
+
 const RegisterForm = () => {
-  const [formData, setFormData] = useState({
-    nombre: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(schema),
   });
-  const [error, setError] = useState("");
-  const { register } = useUser();
+  const { register: registerUser } = useUser();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    // Validations
-    if (!formData.nombre || !formData.email || !formData.password || !formData.confirmPassword) {
-      setError("Por favor complete todos los campos");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden");
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
-      return;
-    }
-
-    if (!formData.email.includes('@')) {
-      setError("Por favor ingrese un email válido");
-      return;
-    }
-
+  const onSubmit = async (data: FormData) => {
     try {
-      await register({
-        nombre: formData.nombre,
-        email: formData.email,
-        password: formData.password
+      await registerUser({
+        nombre: data.nombre,
+        email: data.email,
+        password: data.password,
       });
       navigate("/"); // Redirect to home after successful registration
-    } catch (err) {
-      setError(err.message);
+    } catch (err: any) {
+      console.error(err);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md w-full mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md w-full mx-auto p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <div className="space-y-6">
         <div className="space-y-2">
           <label
@@ -73,12 +52,11 @@ const RegisterForm = () => {
           <input
             type="text"
             id="nombre"
-            name="nombre"
-            value={formData.nombre}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            {...register("nombre")}
+            className={`w-full px-4 py-2 rounded-lg border ${errors.nombre ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
             placeholder="Ingrese su nombre de usuario"
           />
+          {errors.nombre && <p className="text-red-500 text-sm">{errors.nombre.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -91,12 +69,11 @@ const RegisterForm = () => {
           <input
             type="email"
             id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            {...register("email")}
+            className={`w-full px-4 py-2 rounded-lg border ${errors.email ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
             placeholder="Ingrese su email"
           />
+          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -109,12 +86,11 @@ const RegisterForm = () => {
           <input
             type="password"
             id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            {...register("password")}
+            className={`w-full px-4 py-2 rounded-lg border ${errors.password ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
             placeholder="Ingrese su contraseña"
           />
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -127,17 +103,12 @@ const RegisterForm = () => {
           <input
             type="password"
             id="confirmPassword"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            {...register("confirmPassword")}
+            className={`w-full px-4 py-2 rounded-lg border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white`}
             placeholder="Confirme su contraseña"
           />
+          {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
         </div>
-
-        {error && (
-          <p className="text-red-500 text-sm">{error}</p>
-        )}
 
         <button 
           type="submit"
