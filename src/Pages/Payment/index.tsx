@@ -1,8 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { obtenerDeLocalStorage } from "../../utils/guardarEnLocalStorage"; // Import local storage utility
 import { useOrder } from "../../Context/OrderContext"; // Import OrderContext
 
 // Define validation schema with Zod
