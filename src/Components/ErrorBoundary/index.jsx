@@ -1,25 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { useRouteError, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const ErrorBoundary = () => {
-  const error = useRouteError();
-  
-  // Safe access to error properties with type checking
-  const getErrorMessage = () => {
-    if (error && typeof error === 'object') {
-      if ('statusText' in error) return error.statusText;
-      if ('message' in error) return error.message;
-    }
-    return "Ha ocurrido un error inesperado";
-  };
 
-  const getErrorStatus = () => {
-    if (error && typeof error === 'object' && 'status' in error) {
-      return error.status;
-    }
-    return "Desconocido";
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
@@ -28,14 +12,12 @@ const ErrorBoundary = () => {
           <h1 className="text-4xl font-bold text-red-600">
             ¡Oops! Algo salió mal
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Error: {String(getErrorStatus())}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">Error : 404</p>
         </div>
 
         <div className="space-y-4">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Error: {String(getErrorStatus())}
+            Página no encontrada
           </p>
 
           <Link

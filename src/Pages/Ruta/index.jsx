@@ -3,7 +3,6 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useUser } from '../../Context/UserContexto'
-import ErrorBoundary from '../../Components/ErrorBoundary'
 
 // Lazy load components for better performance
 const Home = React.lazy(() => import('../Home'))
@@ -12,7 +11,8 @@ const Register = React.lazy(() => import('../Register'))
 const Reservation = React.lazy(() => import('../Reservation'))
 const Resume = React.lazy(() => import('../Resume')) // Import Resume
 const Payment = React.lazy(() => import('../Payment')) // Import Payment
-const MisPedidos = React.lazy(() => import('../MisPedidos')) // Import MisPedidos
+const MisPedidos = React.lazy( () => import( '../MisPedidos' ) ) // Import MisPedidos
+const Error = React.lazy(() => import('../../Components/ErrorBoundary')) // Import MisPedidos
 
 // Loading component
 const LoadingSpinner = () => (
@@ -37,16 +37,12 @@ const AppRoutes = () => {
     <React.Suspense fallback={<LoadingSpinner />}>
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<Home />} errorElement={<ErrorBoundary />} />
-        <Route
-          path="/login"
-          element={<Login />}
-          errorElement={<ErrorBoundary />}
-        />
+        <Route path="/" element={<Home />} errorElement={<Error />} />
+        <Route path="/login" element={<Login />} errorElement={<Error />} />
         <Route
           path="/register"
           element={<Register />}
-          errorElement={<ErrorBoundary />}
+          errorElement={<Error />}
         />
 
         {/* Protected routes */}
@@ -57,7 +53,7 @@ const AppRoutes = () => {
               <Reservation />
             </ProtectedRoute>
           }
-          errorElement={<ErrorBoundary />}
+          errorElement={<Error />}
         />
         <Route
           path="/resume"
@@ -66,7 +62,7 @@ const AppRoutes = () => {
               <Resume />
             </ProtectedRoute>
           }
-          errorElement={<ErrorBoundary />}
+          errorElement={<Error />}
         />
         <Route
           path="/payment"
@@ -75,7 +71,7 @@ const AppRoutes = () => {
               <Payment />
             </ProtectedRoute>
           }
-          errorElement={<ErrorBoundary />}
+          errorElement={<Error />}
         />
         <Route
           path="/mis-pedidos"
@@ -84,10 +80,10 @@ const AppRoutes = () => {
               <MisPedidos />
             </ProtectedRoute>
           }
-          errorElement={<ErrorBoundary />}
+          errorElement={<Error />}
         />
         {/* Catch all route - redirect to error page */}
-        <Route path="*" element={<ErrorBoundary />} />
+        <Route path="*" element={<Error />} />
       </Routes>
     </React.Suspense>
   );
