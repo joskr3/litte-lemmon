@@ -86,7 +86,6 @@ const AppRoutes = () => {
           }
           errorElement={<ErrorBoundary />}
         />
-
         {/* Catch all route - redirect to error page */}
         <Route path="*" element={<ErrorBoundary />} />
       </Routes>

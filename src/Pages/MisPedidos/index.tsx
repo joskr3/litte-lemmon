@@ -27,7 +27,7 @@ const MisPedidos = () => {
       )}
       <Link
         to="/"
-        className="mt-4 w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-center block"
+        className="mt-4 w-full py-3 px-4 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-green-500 text-center inline-flex"
       >
         Volver a Inicio
       </Link>

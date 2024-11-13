@@ -40,7 +40,7 @@ const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
       isSelected ? "bg-green-200" : "border-green-600 hover:bg-green-50"
     }`} // Apply styles based on selection state
   >
-    <span className="text-xl font-medium text-green-700">Mesa {number}</span> // Display table number
+    <span className="text-xl font-medium text-green-700">Mesa {number}</span> 
   </button>
 );
 
@@ -227,8 +227,8 @@ const ReservationForm = () => {
 const Reservation = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header /> // Render Header component
-      <ReservationForm /> // Render ReservationForm component
+      <Header /> 
+      <ReservationForm /> 
     </div>
   );
 };

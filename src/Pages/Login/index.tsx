@@ -25,7 +25,7 @@ const LoginSection = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await login({
+       login({
         nombre: data.usuario,
         password: data.password,
       });

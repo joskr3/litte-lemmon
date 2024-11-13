@@ -1,6 +1,6 @@
 import { useOrder } from "@/Context/OrderContext";
 import { useUser } from "@/Context/UserContexto";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface Order {
   id: string;
@@ -11,8 +11,8 @@ interface Order {
 const Resume = () => {
   const { user } = useUser();
   const { orders } = useOrder();
-  const location = useLocation();
-  const selectedDishes = location.state?.selectedDishes || [];
+  // const location = useLocation();
+  // const selectedDishes = location.state?.selectedDishes || [];
   const currentUser = user?.nombre || "";
 
   const DisplayOrders = () => {
@@ -35,18 +35,6 @@ const Resume = () => {
     );
   };
 
-  const DisplaySelectedDishes = () => {
-    return (
-      <div className="flex flex-col gap-4">
-        {selectedDishes.map((dish: any, index: number) => (
-          <div key={index} className="border p-4 rounded-md shadow-md">
-            <p className="text-lg font-semibold">{dish.name}</p>
-            <p className="text-gray-600">Precio: ${dish.price}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
 
   const IrAlPago = () => {
     return (
@@ -75,10 +63,10 @@ const Resume = () => {
       ) : (
         <>
           <p className="text-lg mb-2">Usuario no autenticado</p>
-          <DisplaySelectedDishes />
+          {/* <DisplaySelectedDishes /> */}
         </>
       )}
-      {selectedDishes.length > 0 && <IrAlPago />}
+      {/* {selectedDishes.length > 0 && <IrAlPago />} */}
       <div className="mt-4 mx-4  gap-4 inline-flex ">
         <IrAlPago />
         <IraHome />

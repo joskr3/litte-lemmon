@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../Context/UserContexto";
 
 // Define the Header component
 const Header: React.FC = () => {
   const { user, logout } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
@@ -99,17 +100,15 @@ const Header: React.FC = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center">
-                <span className="bg-white px-2 text-sm text-gray-500">
-                  Reserva
-                </span>
+                <button
+                  type="button"
+                  className="bg-green-600 hover:bg-green-700 transition-colors rounded-lg text-white px-8 py-3 text-xl font-semibold shadow-lg hover:shadow-xl"
+                  onClick={() => navigate("/reservation")}
+                >
+                  Reservar
+                </button>
               </div>
             </div>
-            <Link
-              to="/reservation"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-green-600 hover:bg-gray-50 dark:text-gray-200 dark:hover:text-green-400 dark:hover:bg-gray-700"
-            >
-              Reservar Mesa
-            </Link>
           </div>
         </div>
       </nav>
