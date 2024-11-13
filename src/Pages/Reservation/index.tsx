@@ -1,18 +1,11 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-// Import necessary libraries and components
 import React, { useState } from "react"; // Import React and useState for managing component state
 import { useForm } from "react-hook-form"; // Import useForm for form handling
 import { z } from "zod"; // Import Zod for schema validation
 import { zodResolver } from "@hookform/resolvers/zod"; // Import Zod resolver for integrating Zod with react-hook-form
 import { useTable, Dish } from "../../Context/TableContext"; // Import useTable and Dish type from TableContext
 import Header from "../../Components/Header"; // Import Header component
-import { useLocation, useNavigate } from "react-router-dom"; // Import hooks for routing
+import { useNavigate } from "react-router-dom"; // Import hooks for routing
 import { useOrder } from "../../Context/OrderContext"; // Import useOrder from OrderContext
-import {
-  guardarEnLocalStorage,
-  obtenerDeLocalStorage,
-} from "../../utils/guardarEnLocalStorage"; // Import local storage utility functions
 
 // Define validation schema with Zod
 const schema = z.object({
@@ -47,14 +40,13 @@ const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
 // ReservationForm component to handle the reservation process
 const ReservationForm = () => {
   const context = useTable(); // Get table context
-  const { addOrder, orders } = useOrder(); // Get addOrder function and current orders from OrderContext
+  const { addOrder } = useOrder(); // Get addOrder function and current orders from OrderContext
 
   if (!context) {
     throw new Error("useTable debe ser usado dentro de un TableProvider"); // Ensure context is available
   }
 
   const { availableDishes } = context; // Get available dishes from context
-  const location = useLocation(); // Get current location for routing
   const currentDate = new Date(); // Get current date
   const defaultDate = currentDate.toISOString().split("T")[0]; // Format default date for input
   const defaultTime = currentDate.toTimeString().split(" ")[0].slice(0, 5); // Format default time for input
@@ -76,29 +68,22 @@ const ReservationForm = () => {
   });
 
   const [showDateTime, setShowDateTime] = useState(false); // State to toggle date/time fields
-  const [selectedTable, setSelectedTable] = useState<number | null>(null); // State to track selected table
-  const totalAmount =
-    location.state?.totalAmount || obtenerDeLocalStorage("totalAmount") || 0; // Get total amount from location state or local storage
-
+  const [selectedTable, setSelectedTable] = useState<number | null>(null); // State to track 
+  
   // Function to extract dish names from an array of Dish objects
-  const orderFromDishes = (dishes: Dish[]): FormData["selectedDishes"] => {
-    return dishes.map((dish) => dish.name); // Return an array of dish names
-  };
+  // const orderFromDishes = (dishes: Dish[]): FormData["selectedDishes"] => {
+  //   return dishes.map((dish) => dish.name); // Return an array of dish names
+  // };
 
-  // Get selected dishes from location state or local storage
-  const selectedDishes = orderFromDishes(
-    location.state?.selectedDishes ||
-      obtenerDeLocalStorage("selectedDishes") ||
-      []
-  );
+  // const totalAmount = selectedDishes.reduce((total, dishName) => {
+  //   const dish = availableDishes.find((d) => d.name === dishName); // Find dish by name
+  //   return total + (dish ? dish.price : 0); // Add dish price to total
+  // }, 0); // Initialize total amount as 0
 
   const navigate = useNavigate(); // Initialize navigate for routing
 
   // Function to handle form submission
   const onSubmit = async (data: FormData) => {
-    const updatedOrders = [...orders, { ...data, totalAmount }]; // Create updated orders array
-    guardarEnLocalStorage("orders", updatedOrders); // Save updated orders to local storage
-    
     // Create an array of dish objects with name and price
     const dishDetailsFromData = data.selectedDishes.map((dishName) => {
       const dish = availableDishes.find((d) => d.name === dishName); // Find dish by name
@@ -107,14 +92,13 @@ const ReservationForm = () => {
         price: dish ? dish.price : 0, // Return dish price or 0 if not found
       };
     });
-
+    // Calculate total amount
+    const totalAmount = dishDetailsFromData.reduce((total, dish) => total + dish.price, 0);
     // Add order with dish details and total amount
     addOrder(dishDetailsFromData, totalAmount);
-    
+    // console.log(totalAmount,"TOTAL AMOUNT en reservation- submit")
     // Navigate to a success page or confirmation page
-    navigate('/resume',
-      { state: { ...data, totalAmount, selectedDishes } }
-    ); // Pass data to the next route
+    navigate('/resume'); // Pass data to the next route
   };
 
   return (
