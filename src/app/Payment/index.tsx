@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useOrder } from "../../Context/OrderContext"; // Import OrderContext
+import { useOrder } from "../../../Context/OrderContext"; // Import OrderContext
 
 // Define validation schema with Zod
 const schema = z.object({

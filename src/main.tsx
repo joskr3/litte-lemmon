@@ -2,7 +2,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import AppRoutes from "./Pages/Ruta";
+import AppRoutes from "./app/Ruta";
 import GlobalProvider from "./Provider/GlobalProvider";
 
 createRoot(document.getElementById("root")!).render(

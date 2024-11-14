@@ -60,13 +60,13 @@ export function LoginForm() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="email" className="text-green-700">
+              <Label htmlFor="usuario" className="text-green-700">
                 Usuario
               </Label>
               <Input
                 id="usuario"
                 type="text"
-                placeholder="Johndoe123"
+                placeholder=""
                 className={cn({ "border-red-500": errors.usuario })}
                 {...register("usuario")}
                 required
@@ -84,7 +84,7 @@ export function LoginForm() {
                   to="/"
                   className="ml-auto inline-block text-sm underline text-green-700"
                 >
-                  Te olvidaste tu contraseña?
+                  Olvidaste tu contraseña?
                 </Link>
               </div>
               <Input
@@ -106,7 +106,7 @@ export function LoginForm() {
           </div>
         </form>
         <div className="mt-4 text-center text-sm text-green-700">
-          No tienes una cuenta?
+          No tienes una cuenta? {" "}
           <Link to="/register" className="underline text-yellow-500">
             Registro
           </Link>

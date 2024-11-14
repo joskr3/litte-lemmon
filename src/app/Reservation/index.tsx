@@ -2,10 +2,10 @@ import React, { useState } from "react"; // Import React and useState for managi
 import { useForm } from "react-hook-form"; // Import useForm for form handling
 import { z } from "zod"; // Import Zod for schema validation
 import { zodResolver } from "@hookform/resolvers/zod"; // Import Zod resolver for integrating Zod with react-hook-form
-import { useTable } from "../../Context/TableContext"; // Import useTable and Dish type from TableContext
-import Header from "../../Components/Header"; // Import Header component
+import { useTable } from "../../../Context/TableContext"; // Import useTable and Dish type from TableContext
+import Header from "../../../Components/Header"; // Import Header component
 import { useNavigate } from "react-router-dom"; // Import hooks for routing
-import { useOrder } from "../../Context/OrderContext"; // Import useOrder from OrderContext
+import { useOrder } from "../../../Context/OrderContext"; // Import useOrder from OrderContext
 
 // Define validation schema with Zod
 const schema = z.object({
@@ -33,7 +33,7 @@ const Table: React.FC<TableProps> = ({ number, onSelect, isSelected }) => (
       isSelected ? "bg-green-200" : "border-green-600 hover:bg-green-50"
     }`} // Apply styles based on selection state
   >
-    <span className="text-xl font-medium text-green-700">Mesa {number}</span> 
+    <span className="text-xl font-medium text-green-700">Mesa {number}</span>
   </button>
 );
 
@@ -68,8 +68,8 @@ const ReservationForm = () => {
   });
 
   const [showDateTime, setShowDateTime] = useState(false); // State to toggle date/time fields
-  const [selectedTable, setSelectedTable] = useState<number | null>(null); // State to track 
-  
+  const [selectedTable, setSelectedTable] = useState<number | null>(null); // State to track
+
   // Function to extract dish names from an array of Dish objects
   // const orderFromDishes = (dishes: Dish[]): FormData["selectedDishes"] => {
   //   return dishes.map((dish) => dish.name); // Return an array of dish names
@@ -93,12 +93,15 @@ const ReservationForm = () => {
       };
     });
     // Calculate total amount
-    const totalAmount = dishDetailsFromData.reduce((total, dish) => total + dish.price, 0);
+    const totalAmount = dishDetailsFromData.reduce(
+      (total, dish) => total + dish.price,
+      0
+    );
     // Add order with dish details and total amount
     addOrder(dishDetailsFromData, totalAmount);
     // console.log(totalAmount,"TOTAL AMOUNT en reservation- submit")
     // Navigate to a success page or confirmation page
-    navigate('/resume'); // Pass data to the next route
+    navigate("/resume"); // Pass data to the next route
   };
 
   return (
@@ -211,8 +214,8 @@ const ReservationForm = () => {
 const Reservation = () => {
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header /> 
-      <ReservationForm /> 
+      <Header />
+      <ReservationForm />
     </div>
   );
 };
