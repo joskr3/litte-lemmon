@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../../Context/UserContexto";
+import { Button } from "../ui/button";
 
 // Define the Header component
 const Header: React.FC = () => {
@@ -52,18 +53,12 @@ const Header: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center space-x-2 sm:space-x-4">
-                <Link
-                  to="/login"
-                  className="text-sm sm:text-base font-medium text-gray-700 hover:text-gray-900 dark:text-gray-200 dark:hover:text-white"
-                >
+                <Button variant="link" onClick={() => navigate("/login")}>
                   Iniciar sesión
-                </Link>
-                <Link
-                  to="/register"
-                  className="ml-4 text-sm sm:text-base font-medium text-white bg-green-600 hover:bg-green-700 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-                >
+                </Button>
+                <Button variant="register" onClick={() => navigate("/register")}>
                   Registrarse
-                </Link>
+                </Button>
               </div>
             )}
             <div className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">

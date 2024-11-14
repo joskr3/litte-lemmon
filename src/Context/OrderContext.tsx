@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { guardarEnLocalStorage } from '../utils/guardarEnLocalStorage'; // Import local storage utility
+import { guardarEnLocalStorage } from '../lib/guardarEnLocalStorage'; // Import local storage utility
 
 interface Order {
   id: string;
