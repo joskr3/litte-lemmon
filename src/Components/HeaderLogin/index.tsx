@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Hlogin: React.FC = () => {
+const Headerlogin: React.FC = () => {
   let navigate = useNavigate();
   return (
     <header className="sticky z-50 top-0 bg-white shadow-sm dark:bg-gray-900">
@@ -43,4 +43,4 @@ const Hlogin: React.FC = () => {
   );
 };
 
-export default Hlogin;
+export default Headerlogin;
