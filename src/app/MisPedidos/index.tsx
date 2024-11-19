@@ -1,4 +1,4 @@
-import { useOrder } from "../../../Context/OrderContext"; // Import OrderContext
+import { useOrder } from "@/Context/OrderContext";
 import { Link } from "react-router-dom";
 
 const MisPedidos = () => {

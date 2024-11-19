@@ -2,10 +2,10 @@ import React, { useState } from "react"; // Import React and useState for managi
 import { useForm } from "react-hook-form"; // Import useForm for form handling
 import { z } from "zod"; // Import Zod for schema validation
 import { zodResolver } from "@hookform/resolvers/zod"; // Import Zod resolver for integrating Zod with react-hook-form
-import { useTable } from "../../../Context/TableContext"; // Import useTable and Dish type from TableContext
-import Header from "../../../Components/Header"; // Import Header component
-import { useNavigate } from "react-router-dom"; // Import hooks for routing
-import { useOrder } from "../../../Context/OrderContext"; // Import useOrder from OrderContext
+import { useTable } from "@/Context/TableContext";
+import { useOrder } from "@/Context/OrderContext";
+import { useNavigate } from "react-router-dom";
+import Header from "@/Components/Header";
 
 // Define validation schema with Zod
 const schema = z.object({
