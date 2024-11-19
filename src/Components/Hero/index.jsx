@@ -6,17 +6,13 @@ import {
   CarouselItem,
 } from "../ui/carousel";
 import {motion} from "motion/react"
-
 import { useNavigate } from "react-router-dom";
 
 export function CarouselHero() {
   return (
     <div className="absolute inset-0">
       <Carousel
-        className="h-[40dvh] w-full mx-auto  md:h-[50dvh]"
-        opts={{
-          align: "start",
-        }}
+
         plugins={[
           Autoplay({
             delay: 5000,
@@ -26,10 +22,10 @@ export function CarouselHero() {
         <CarouselContent>
           {Array.from({ length: 5 }).map((_, index) => (
             <CarouselItem key={index}>
-              <div className="p-1 h-full w-full">
+              <div className="p-1  max-h-[50dvh] w-full">
                 <img
                   src="postre.webp"
-                  className="h-full md:h-1/4 w-full object-cover brightness-75"
+                  className=" max-h-96 md:h-1/4 w-full object-cover brightness-75"
                   alt="postre principal"
                 />
               </div>

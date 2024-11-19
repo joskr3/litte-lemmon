@@ -9,6 +9,7 @@ export interface Dish { // Exporting Dish interface
   id: number;
   name: string;
   price: number;
+  download_url?:string
 }
 
 interface Reservation {
@@ -35,12 +36,39 @@ interface TableContextValue {
 
 const TableContext = createContext<TableContextValue | null>(null);
 
-const initialDishes: Dish[] = [
-  { id: 1, name: "Pasta Carbonara", price: 15.99 },
-  { id: 2, name: "Salmon a la Parrilla", price: 22.99 },
-  { id: 3, name: "Ensalada César", price: 12.99 },
-  { id: 4, name: "Risotto de Champiñones", price: 18.99 },
-  { id: 5, name: "Pollo al Limón", price: 16.99 },
+export const initialDishes: Dish[] = [
+  {
+    id: 1,
+    name: "Pasta Carbonara",
+    price: 15.99,
+    download_url:
+      "https://cdn.pixabay.com/photo/2015/04/08/13/13/pasta-712664_1280.jpg",
+  },
+  {
+    id: 2,
+    name: "Salmon a la Parrilla",
+    price: 22.99,
+    download_url:
+      "https://cdn.pixabay.com/photo/2020/04/27/05/52/salmon-5098232_1280.jpg",
+  },
+  {
+    id: 3,
+    name: "Ensalada César",
+    price: 12.99,
+    download_url : "https://cdn.pixabay.com/photo/2017/04/18/05/05/suppresses-2237785_1280.jpg",
+  },
+  {
+    id: 4,
+    name: "Risotto de Champiñones",
+    price: 18.99,
+    download_url : "https://cdn.pixabay.com/photo/2020/01/15/00/28/champignon-4766607_1280.jpg",
+  },
+  {
+    id: 5,
+    name: "Pollo al Limón",
+    price: 16.99,
+    download_url : "https://cdn.pixabay.com/photo/2017/07/16/12/39/chicken-2509164_1280.jpg",
+  },
 ];
 
 const TableProvider = ({ children }) => {
