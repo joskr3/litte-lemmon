@@ -5,6 +5,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "../ui/carousel";
+import {motion} from "motion/react"
 
 import { useNavigate } from "react-router-dom";
 
@@ -43,7 +44,9 @@ export function CarouselHero() {
 const HeroButton = () => {
   let navigate = useNavigate();
   return (
-    <button
+    <motion.button
+      whileHover={{ scale: 1.2 }}
+      whileTap={{ scale: 0.8 }}
       type="button"
       className="bg-green-600 hover:bg-green-700 transition-colors rounded-lg text-white px-8 py-3 text-xl font-semibold shadow-lg hover:shadow-xl"
       onClick={() => {
@@ -51,7 +54,7 @@ const HeroButton = () => {
       }}
     >
       Reservar
-    </button>
+    </motion.button>
   );
 };
 
