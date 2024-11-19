@@ -1,4 +1,4 @@
-import { initialDishes, useTable } from "@/Context/TableContext";
+import { initialDishes } from "@/Context/TableContext";
 import {
   Card,
   CardContent,
@@ -7,6 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger
+} from "@/components/ui/dialog";
+
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useOrder } from "@/Context/OrderContext";
@@ -26,7 +32,7 @@ function DetalleCard({ id, download_url, name }: DetalleProps) {
   return (
     <Card className="flex flex-col justify-center m-auto min-h-12 max-w-44">
       <CardHeader>
-        <CardTitle >{name}</CardTitle>
+        <CardTitle>{name}</CardTitle>
         <CardDescription>{id}</CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
@@ -37,7 +43,21 @@ function DetalleCard({ id, download_url, name }: DetalleProps) {
         />
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="register">Ver mas</Button>
+        <Dialog>
+          <DialogTrigger>
+            <Button variant="register">Ver mas</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DetalleCard
+              key={id}
+              download_url={download_url || ""}
+              name={name}
+            />
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum saepe fuga dolorum beatae nobis ut nemo sapiente ad exercitationem? Obcaecati officiis accusantium vel iste, libero rerum consectetur pariatur sint nesciunt.
+            </p>
+          </DialogContent>
+        </Dialog>
       </CardFooter>
     </Card>
   );
