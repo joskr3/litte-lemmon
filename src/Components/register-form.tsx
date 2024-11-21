@@ -63,6 +63,7 @@ const NewRegisterForm = () => {
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
+
         <CardTitle className="text-2xl text-green-700 ">Registro</CardTitle>
         <CardDescription className="text-yellow-500">
           Ingresa tus nombres, correo y contraseña para crear una cuenta

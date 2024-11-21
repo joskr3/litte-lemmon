@@ -3,10 +3,11 @@ import { BrowserRouter } from "react-router-dom";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { UserProvider } from "../Context/UserContexto.tsx";
 import { TableProvider } from "../Context/TableContext";
-import { OrderProvider } from "../Context/OrderContext"; // Import OrderProvider
+import { OrderProvider } from "../Context/OrderContext";
+import { ReactNode } from "react"; // Import OrderProvider
 
 interface Props {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const GlobalProvider = ({ children }: Props) => {
