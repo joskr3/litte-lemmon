@@ -40,12 +40,21 @@ export function LoginForm() {
       login({
         nombre: data.usuario,
         password: data.password,
-      });
-      navigate("/");
+      })
+        .then(() => {
+          navigate("/");
+        })
+        .catch((error) => {
+          console.error("Error al iniciar sesión:", error);
+        })
+        .finally(() => {
+          console.log("Se ejecuto el Login");
+        });
     } catch (err: any) {
       console.error(err);
     }
   };
+  
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -106,7 +115,7 @@ export function LoginForm() {
           </div>
         </form>
         <div className="mt-4 text-center text-sm text-green-700">
-          No tienes una cuenta? {" "}
+          No tienes una cuenta?{" "}
           <Link to="/register" className="underline text-yellow-500">
             Registro
           </Link>

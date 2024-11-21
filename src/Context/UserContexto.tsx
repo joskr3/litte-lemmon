@@ -1,16 +1,20 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
+import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
+
+const API_URL = "http://localhost:8000";
 
 interface User {
   nombre: string;
   password: string;
-  email: string;
+  email?: string;
 }
 
 interface UserContextType {
   user: User | null;
-  login: (userData: { nombre: string; password: string }) => boolean;
   logout: () => void;
-  register: (userData: User) => boolean;
+  register: (userData: User) => Promise<void>;
+  login: (userData: User) => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -24,45 +28,65 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [registeredUsers, setRegisteredUsers] = useState<User[]>([]);
 
-  const register = (userData: User): boolean => {
-    if (!userData.nombre || !userData.password || !userData.email) {
-      throw new Error("Todos los campos son requeridos");
+  const register = async ({ nombre, password, email }: User) => {
+
+    try {
+      const userExists = registeredUsers.some(
+        (user) => user.email === email || user.nombre === nombre
+      );
+      if (userExists) {
+        throw new Error("El usuario ya existe");
+      }
+
+      if (!registeredUsers) {
+        const registerMutation = useMutation({
+          mutationFn: async (userData: User) => {
+            const response = await axios.post(`${API_URL}/register`, userData);
+            return response.data;
+          },
+        });
+
+        const response = await registerMutation.mutateAsync({
+          nombre,
+          password,
+          email,
+        });
+
+        if (response.status === 201) {
+          console.log("Usuario registrado exitosamente");
+        } else {
+          console.error("Error al registrar usuario:", response.statusText);
+        }
+
+        setRegisteredUsers([...registeredUsers, response.data]);
+      }
+      setUser({ nombre, password, email });
+    } catch (error) {
+      console.error("Error al registrar usuario:", error);
     }
-
-    // Check if user already exists
-    const userExists = registeredUsers.some(
-      (user) => user.email === userData.email || user.nombre === userData.nombre
-    );
-
-    if (userExists) {
-      throw new Error("El usuario ya existe");
-    }
-
-    // Add new user to registered users
-    setRegisteredUsers([...registeredUsers, userData]);
-
-    // Automatically login after registration
-    setUser(userData);
-    return true;
   };
 
-  const login = (userData: { nombre: string; password: string }): boolean => {
-    if (!userData.nombre || !userData.password) {
-      throw new Error("Usuario y contraseña son requeridos");
+  const login = async ({ nombre: username, password }: User) => {
+    try {
+      const loginQuery = useQuery({
+        queryKey: ["login", { username, password }],
+        queryFn: async () => {
+          const response = await axios.post(`${API_URL}/login`, {
+            username,
+            password,
+          });
+          return response.data;
+        },
+      });
+
+      if (loginQuery.isSuccess) {
+        setUser({ nombre: username, password });
+      } else {
+        console.error("Error al iniciar sesión:", loginQuery.error);
+      }
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
     }
-
-    // Find user in registered users
-    const foundUser = registeredUsers.find(
-      (user) =>
-        user.nombre === userData.nombre && user.password === userData.password
-    );
-
-    if (!foundUser) {
-      throw new Error("Usuario o contraseña incorrectos");
-    }
-
-    setUser(foundUser);
-    return true;
   };
 
   const logout = (): void => {

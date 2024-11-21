@@ -46,8 +46,16 @@ const NewRegisterForm = () => {
           nombre: data.nombre,
           email: data.email,
           password: data.password,
-        });
-        navigate("/"); // Redirect to home after successful registration
+        })
+          .then(() => {
+            navigate("/");
+          })
+          .catch((error) => {
+            console.error("Error al registrar:", error);
+          })
+          .finally(() => {
+            console.log("Se ejecuto el Registro");
+          });
       } catch (err: any) {
         console.error(err);
       }
