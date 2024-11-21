@@ -38,7 +38,6 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         throw new Error("El usuario ya existe");
       }
 
-      if (!registeredUsers) {
         const registerMutation = useMutation({
           mutationFn: async (userData: User) => {
             const response = await axios.post(`${API_URL}/register`, userData);
@@ -59,7 +58,7 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
 
         setRegisteredUsers([...registeredUsers, response.data]);
-      }
+      
       setUser({ nombre, password, email });
     } catch (error) {
       console.error("Error al registrar usuario:", error);
