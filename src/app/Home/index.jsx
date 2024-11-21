@@ -18,10 +18,6 @@ const Home = () => {
       <div className="flex-[3]">
         <Menu />
       </div>
-
-      <div className="flex-[3]">
-        <Menu />
-      </div>
       <div className="flex-[3]">
         <Detalle />
       </div>

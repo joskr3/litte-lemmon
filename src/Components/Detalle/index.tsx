@@ -1,4 +1,3 @@
-// import { initialDishes } from "@/Context/TableContext";
 import {
   Card,
   CardContent,
@@ -7,16 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger
-} from "@/components/ui/dialog";
-
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 // import { useOrder } from "@/Context/OrderContext";
 import { Suspense } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 
 interface DetalleProps {
   id?: string;
@@ -77,9 +71,6 @@ const DetalleFetch = () => {
 };
 
 const Detalle = () => {
-  //const tableContext = useTable(); // Get table context
-  // const dishes = initialDishes;
-  // const { orders } = useOrder();
   return (
     <section className="py-12 bg-gray-50 dark:bg-gray-900">
       <div className=" mx-auto px-4">
