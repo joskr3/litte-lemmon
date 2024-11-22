@@ -1,4 +1,3 @@
-import MisPedidos from "@/app/MisPedidos";
 import type React from "react";
 import { Drawer } from "vaul";
 import CartOrders from "../CartOrders";
